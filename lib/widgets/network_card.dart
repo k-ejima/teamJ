@@ -1,3 +1,4 @@
+// widgets/network_card.dart
 import 'package:flutter/material.dart';
 import 'info_card.dart';
 import '../services/network_service.dart';
@@ -12,10 +13,17 @@ class NetworkCard extends StatefulWidget {
 class _NetworkCardState extends State<NetworkCard> {
   String info = NetworkService.initialInfo;
 
+  @override
+  void initState() {
+    super.initState();
+    _measure(); // ← アプリ起動時に自動測定
+  }
+
+
   void _measure() async {
     setState(() => info = "測定中...");
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() => info = NetworkService.updatedInfo);
+    final result = await NetworkService.measureSpeed();
+    setState(() => info = result);
   }
 
   @override
@@ -26,8 +34,8 @@ class _NetworkCardState extends State<NetworkCard> {
         icon: Icons.wifi,
         text: info,
         title: "通信速度",
-        iconColor: Colors.blue
-        ),
+        iconColor: Colors.blue,
+      ),
     );
   }
 }
