@@ -18,7 +18,10 @@ class InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double iconSize = constraints.maxWidth * 0.25;
+        final double width = constraints.maxWidth;
+        final double iconSize = width * 0.25;
+        final double titleFontSize = width * 0.08;
+        final double textFontSize = width * 0.06;
 
         return Container(
           decoration: BoxDecoration(
@@ -27,28 +30,28 @@ class InfoCard extends StatelessWidget {
           ),
           padding: const EdgeInsets.all(12),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(
-                child: Icon(
-                  icon,
-                  size: iconSize,
-                  color: iconColor,
-                ),
+              Icon(
+                icon,
+                size: iconSize,
+                color: iconColor,
               ),
               const SizedBox(height: 8),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: titleFontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 text,
-                style: const TextStyle(
-                  fontSize: 14,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: textFontSize,
                 ),
               ),
             ],
