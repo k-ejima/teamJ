@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/network_card.dart';
 import '../widgets/battery_card.dart';
 import '../widgets/storage_card.dart';
+import '../widgets/bluetooth_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -14,7 +15,11 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         title: const Text(
           "Battery",
-          style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: Padding(
@@ -27,6 +32,7 @@ class HomeScreen extends StatelessWidget {
             NetworkCard(),
             BatteryCard(),
             StorageCard(),
+            BluetoothCard(),
           ],
         ),
       ),
