@@ -16,13 +16,12 @@ class _NetworkCardState extends State<NetworkCard> {
   @override
   void initState() {
     super.initState();
-    _measure(); // ← アプリ起動時に自動測定
+    _measure();
   }
-
 
   void _measure() async {
     setState(() => info = "測定中...");
-    final result = await NetworkService.measureSpeed();
+    final result = await NetworkService.measureAll();
     setState(() => info = result);
   }
 
