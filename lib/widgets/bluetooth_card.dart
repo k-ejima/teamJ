@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'info_card.dart';
 
 class BluetoothCard extends StatefulWidget {
   const BluetoothCard({super.key});
@@ -47,25 +48,18 @@ class _BluetoothCardState extends State<BluetoothCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Bluetooth",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            if (connectedDevices.isEmpty) const Text("接続中のデバイスはありません"),
-            for (var device in connectedDevices)
-              Text("・${device['name']} (${device['address']})"),
-          ],
-        ),
-      ),
+    // 接続デバイス一覧をテキスト化
+    String deviceText = connectedDevices.isEmpty
+        ? "接続中のデバイスはありません"
+        : connectedDevices
+              .map((device) => "・${device['name']} (${device['address']})")
+              .join("\n");
+
+    return InfoCard(
+      icon: Icons.bluetooth,
+      title: "Bluetooth",
+      text: deviceText,
+      iconColor: Colors.blueAccent,
     );
   }
 }
