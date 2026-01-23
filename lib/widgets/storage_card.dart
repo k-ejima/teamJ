@@ -10,12 +10,38 @@ class StorageCard extends StatefulWidget {
 }
 
 class _StorageCardState extends State<StorageCard> {
-  String info = StorageService.initialInfo;
+  StorageState? storageState;
+  bool isLoading = false;
 
-  void _measure() async {
-    setState(() => info = "測定中...");
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() => info = StorageService.updatedInfo);
+  Future<void> _measure() async {
+    setState(() => isLoading = true);
+
+    try {
+      final result = await StorageService.fetchStorageInfo();
+      setState(() {
+        storageState = result;
+      });
+    } catch (e) {
+      setState(() {
+        storageState = null;
+      });
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  String _buildText() {
+    if (isLoading) {
+      return "測定中...";
+    }
+
+    if (storageState == null) {
+      return "タップして測定";
+    }
+
+    return "合計: ${storageState!.totalGB.toStringAsFixed(1)} GB\n"
+        "空き: ${storageState!.freeGB.toStringAsFixed(1)} GB\n"
+        "使用率: ${(storageState!.usedPercent * 100).toStringAsFixed(0)}%";
   }
 
   @override
@@ -23,11 +49,11 @@ class _StorageCardState extends State<StorageCard> {
     return GestureDetector(
       onTap: _measure,
       child: InfoCard(
-        icon: Icons.sd_storage, 
-        text: info,
+        icon: Icons.sd_storage,
         title: "ストレージ",
-        iconColor: Colors.teal
-        ),
+        text: _buildText(),
+        iconColor: Colors.teal,
+      ),
     );
   }
 }
