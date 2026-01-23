@@ -3,6 +3,7 @@ import '../widgets/network_card.dart';
 import '../widgets/battery_card.dart';
 import '../widgets/storage_card.dart';
 import '../widgets/bluetooth_card.dart';
+import '../widgets/cpu_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -33,6 +34,7 @@ class HomeScreen extends StatelessWidget {
             BatteryCard(),
             StorageCard(),
             BluetoothCard(),
+            CpuCard(),
           ],
         ),
       ),

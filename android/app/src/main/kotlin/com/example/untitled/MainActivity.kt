@@ -1,22 +1,24 @@
-package com.example.untitled // AndroidManifest.xml の package と一致
+package com.example.untitled
 
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.content.BroadcastReceiver
+import android.os.BatteryManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.BatteryManager
-import android.os.Build
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.content.BroadcastReceiver
 import android.content.pm.PackageManager
+import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
 
 class MainActivity : FlutterActivity() {
 
     private val BATTERY_CHANNEL = "com.example.battery/info"
     private val BT_CHANNEL = "samples.flutter.dev/bluetooth"
+    private val CPU_CHANNEL = "com.example.cpu/info"
     private val REQUEST_BT_PERMISSION = 1
 
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
@@ -26,7 +28,7 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        // --- バッテリー情報 ---
+        // バッテリー情報
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, BATTERY_CHANNEL)
             .setMethodCallHandler { call, result ->
                 val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
@@ -45,23 +47,47 @@ class MainActivity : FlutterActivity() {
                 }
             }
 
-        // --- Bluetooth権限確認 & 初期セットアップ ---
+        // Bluetooth情報
         if (checkBluetoothPermission()) {
             setupBluetooth()
         } else {
             requestBluetoothPermission()
         }
 
-        // Flutterから接続中デバイスを取得
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, BT_CHANNEL)
             .setMethodCallHandler { call, result ->
                 if (call.method == "getPairedDevices") {
-                    // 最新の接続デバイスリストを返す
                     result.success(connectedDevicesList)
                 } else {
                     result.notImplemented()
                 }
             }
+
+        // CPU周波数情報
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CPU_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "getCpuFrequency" -> {
+                        val freq = getCpuFrequency()
+                        result.success(freq)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+    }
+
+    private fun getCpuFrequency(): String {
+        return try {
+            val file = File("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq")
+            if (file.exists()) {
+                val freq = file.readText().trim()
+                (freq.toInt() / 1000).toString() // kHz → MHz
+            } else {
+                "ファイルが存在しません"
+            }
+        } catch (e: Exception) {
+            "取得失敗: ${e.message}"
+        }
     }
 
     private fun checkBluetoothPermission(): Boolean {
@@ -93,7 +119,6 @@ class MainActivity : FlutterActivity() {
     private fun setupBluetooth() {
         updateConnectedDevices()
 
-        // 接続/切断イベントを監視
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val action = intent?.action
@@ -126,7 +151,6 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    // BluetoothDevice.isConnected() を拡張関数で作成
     private fun BluetoothDevice.isConnected(): Boolean {
         return try {
             val method = javaClass.getMethod("isConnected")
