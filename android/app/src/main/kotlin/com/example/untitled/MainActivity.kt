@@ -21,6 +21,7 @@ class MainActivity : FlutterActivity() {
     private val BT_CHANNEL = "samples.flutter.dev/bluetooth"
     private val CPU_CHANNEL = "com.example.cpu/info"
     private val STORAGE_CHANNEL = "storage/info"
+    private val OS_CHANNEL = "device/os"
 
     private val REQUEST_BT_PERMISSION = 1
 
@@ -36,11 +37,14 @@ class MainActivity : FlutterActivity() {
         ===================== */
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, BATTERY_CHANNEL)
             .setMethodCallHandler { call, result ->
-                val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+                val batteryManager =
+                    getSystemService(Context.BATTERY_SERVICE) as BatteryManager
                 when (call.method) {
                     "getChargingSpeed" -> {
                         val currentNow =
-                            batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+                            batteryManager.getIntProperty(
+                                BatteryManager.BATTERY_PROPERTY_CURRENT_NOW
+                            )
                         result.success(currentNow)
                     }
                     "getBatteryDetails" -> {
@@ -85,15 +89,13 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CPU_CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
-                    "getCpuFrequency" -> {
-                        result.success(getCpuFrequency())
-                    }
+                    "getCpuFrequency" -> result.success(getCpuFrequency())
                     else -> result.notImplemented()
                 }
             }
 
         /* =====================
-           ⭐ ストレージ情報（追加）
+           ストレージ情報
         ===================== */
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, STORAGE_CHANNEL)
             .setMethodCallHandler { call, result ->
@@ -119,6 +121,26 @@ class MainActivity : FlutterActivity() {
                                 e.message
                             )
                         }
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+
+        /* =====================
+           ⭐ OS / 端末情報
+        ===================== */
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, OS_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "getOsInfo" -> {
+                        val osVersion = Build.VERSION.RELEASE
+                        val sdkInt = Build.VERSION.SDK_INT
+                        val manufacturer = Build.MANUFACTURER
+                        val model = Build.MODEL
+
+                        result.success(
+                            "Android $osVersion (SDK $sdkInt)\n$manufacturer $model"
+                        )
                     }
                     else -> result.notImplemented()
                 }

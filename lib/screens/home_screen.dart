@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
@@ -8,6 +7,7 @@ import '../widgets/battery_card.dart';
 import '../widgets/storage_card.dart';
 import '../widgets/bluetooth_card.dart';
 import '../widgets/cpu_card.dart';
+import '../widgets/device_info_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -40,12 +40,16 @@ class HomeScreen extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  children: [
+                  // 画面上に見えている範囲だけ描画する設定
+                  shrinkWrap: true,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: const [
                     NetworkCard(),
                     BatteryCard(),
                     StorageCard(),
                     BluetoothCard(),
-                    CpuCard(), // ← 追加
+                    CpuCard(),
+                    DeviceInfoCard(),
                   ],
                 ),
               ),
@@ -57,10 +61,17 @@ class HomeScreen extends StatelessWidget {
                 height: 56,
                 child: ElevatedButton.icon(
                   onPressed: () async {
-                    final image = await screenshotController.capture();
-                    if (image != null) {
-                      final file = XFile.fromData(image, mimeType: 'image/png');
-                      await Share.shareXFiles([file], text: 'この画面を共有します📱');
+                    try {
+                      final image = await screenshotController.capture();
+                      if (image != null) {
+                        final file = XFile.fromData(
+                          image,
+                          mimeType: 'image/png',
+                        );
+                        await Share.shareXFiles([file], text: 'この画面を共有します📱');
+                      }
+                    } catch (e) {
+                      debugPrint('スクリーンショット失敗: $e');
                     }
                   },
                   icon: const Icon(Icons.share),

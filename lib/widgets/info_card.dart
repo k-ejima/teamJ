@@ -19,44 +19,57 @@ class InfoCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double width = constraints.maxWidth;
-        final double iconSize = width * 0.25;
-        final double titleFontSize = width * 0.08;
-        final double textFontSize = width * 0.06;
+        final double iconSize = width * 0.22;
+        final double titleFontSize = width * 0.07;
+        final double textFontSize = width * 0.055;
 
         return Container(
           decoration: BoxDecoration(
-            color: Colors.teal[50],
-            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              colors: [Colors.teal.shade50, Colors.teal.shade100],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 6,
-                offset: const Offset(2, 3),
+                color: Colors.grey.shade300.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(4, 6),
               ),
             ],
           ),
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(icon, size: iconSize, color: iconColor),
-              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: iconColor.withOpacity(0.15),
+                ),
+                padding: EdgeInsets.all(iconSize * 0.3),
+                child: Icon(icon, size: iconSize, color: iconColor),
+              ),
+              const SizedBox(height: 16),
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: titleFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.teal[900],
+                  fontWeight: FontWeight.w600,
+                  color: Colors.teal.shade900,
+                  fontFamily: 'Roboto',
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Text(
                 text,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: textFontSize,
-                  color: Colors.grey[800],
+                  color: Colors.grey.shade800,
+                  height: 1.4,
                 ),
                 softWrap: true,
               ),

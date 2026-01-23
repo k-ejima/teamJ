@@ -13,6 +13,7 @@ dependencies:
   battery_plus: ^7.0.0
   path_provider: ^2.0.15
   system_info_plus: ^0.0.6
+  device_info_plus: ^10.1.0
   cupertino_icons: ^1.0.8
   http: ^1.1.0
   network_info_plus: ^7.0.0
