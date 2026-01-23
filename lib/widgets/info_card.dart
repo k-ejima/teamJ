@@ -27,16 +27,19 @@ class InfoCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.teal[50],
             borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 6,
+                offset: const Offset(2, 3),
+              ),
+            ],
           ),
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: iconSize,
-                color: iconColor,
-              ),
+              Icon(icon, size: iconSize, color: iconColor),
               const SizedBox(height: 8),
               Text(
                 title,
@@ -44,6 +47,7 @@ class InfoCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: titleFontSize,
                   fontWeight: FontWeight.bold,
+                  color: Colors.teal[900],
                 ),
               ),
               const SizedBox(height: 4),
@@ -52,7 +56,9 @@ class InfoCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: textFontSize,
+                  color: Colors.grey[800],
                 ),
+                softWrap: true,
               ),
             ],
           ),
