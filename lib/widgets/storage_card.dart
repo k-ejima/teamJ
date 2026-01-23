@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'info_card.dart';
 import '../services/storage_service.dart';
+import 'info_card.dart';
 
 class StorageCard extends StatefulWidget {
   const StorageCard({super.key});
@@ -10,47 +10,54 @@ class StorageCard extends StatefulWidget {
 }
 
 class _StorageCardState extends State<StorageCard> {
-  StorageState? storageState;
-  bool isLoading = false;
+  StorageState? state;
+  bool loading = true;
+  String? error;
 
-  Future<void> _measure() async {
-    setState(() => isLoading = true);
+  @override
+  void initState() {
+    super.initState();
+    load();
+  }
 
+  Future<void> load() async {
     try {
       final result = await StorageService.fetchStorageInfo();
       setState(() {
-        storageState = result;
+        state = result;
+        loading = false;
+        error = null;
       });
     } catch (e) {
       setState(() {
-        storageState = null;
+        error = '取得失敗';
+        loading = false;
       });
-    } finally {
-      setState(() => isLoading = false);
     }
   }
 
   String _buildText() {
-    if (isLoading) {
-      return "測定中...";
+    if (loading) {
+      return '測定中...';
     }
 
-    if (storageState == null) {
-      return "タップして測定";
+    if (error != null || state == null) {
+      return 'タップして再測定';
     }
 
-    return "合計: ${storageState!.totalGB.toStringAsFixed(1)} GB\n"
-        "空き: ${storageState!.freeGB.toStringAsFixed(1)} GB\n"
-        "使用率: ${(storageState!.usedPercent * 100).toStringAsFixed(0)}%";
+    return
+        '総容量: ${state!.totalGB.toStringAsFixed(1)} GB\n'
+        '空き容量: ${state!.freeGB.toStringAsFixed(1)} GB\n'
+        '使用率: ${(state!.usedPercent * 100).toStringAsFixed(1)} %';
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _measure,
+      onTap: load,
       child: InfoCard(
         icon: Icons.sd_storage,
-        title: "ストレージ",
+        title: 'ストレージ',
         text: _buildText(),
         iconColor: Colors.teal,
       ),
